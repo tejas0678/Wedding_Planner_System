@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import UserRegister from "./Components/auth/UserRegister";
 import PlannerRegister from "./Components/auth/PlannerRegister";
+import Login from "./Components/auth/Login";
+import ForgotPassword from "./Components/auth/ForgetPassword";
 
 // Import all Planner Dashboard components
 import {
@@ -19,6 +21,8 @@ function App() {
     <Routes>
       {/* Auth Routes */}
       <Route path="/" element={<UserRegister />} />
+      <Route path="/user-login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword/>} />
       <Route path="/user-register" element={<UserRegister />} />
       <Route path="/planner-register" element={<PlannerRegister />} />
 
