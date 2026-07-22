@@ -1,32 +1,45 @@
 // src/Components/admin/Layout.jsx
-import { useState } from 'react';
-import { Menu } from 'lucide-react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
+
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Menu } from "lucide-react";
+import Sidebar from "./Sidebar";
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile header */}
-        <div className="lg:hidden bg-white p-4 shadow-sm flex items-center">
+    <div className="min-h-screen bg-gray-100 flex">
+
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
+
+      <div className="flex-1 lg:ml-64">
+
+        {/* Mobile Header */}
+        <header className="lg:hidden flex items-center justify-between bg-white border-b px-5 py-4 shadow-sm">
+
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-gray-600 focus:outline-none"
+            className="text-gray-700"
           >
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="ml-4 text-xl font-semibold text-indigo-700">
+
+          <h1 className="text-xl font-bold text-gray-800">
             WedPlan Admin
           </h1>
-        </div>
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-white">
-          <Outlet /> {/* ← renders /admin/* pages */}
+
+        </header>
+
+        <main className="p-6">
+          <Outlet />
         </main>
+
       </div>
+
     </div>
   );
 }
