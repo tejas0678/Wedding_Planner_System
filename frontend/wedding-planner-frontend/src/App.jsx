@@ -4,8 +4,16 @@ import UserRegister from "./Components/auth/UserRegister";
 import PlannerRegister from "./Components/auth/PlannerRegister";
 import Login from "./Components/auth/Login";
 import ForgetPassword from "./Components/auth/ForgetPassword";
+import Layout from "./Components/admin/Layout";
 
-// Import Planner Dashboard components
+// import Dashboard from "./Components/admin/pages/Dashboard";
+// import ManageClients from "./Components/admin/pages/ManageClients";
+// import ManagePlanners from "./Components/admin/pages/ManagePlanners";
+// import ManagePackages from "./Components/admin/pages/ManagePackages";
+// import ManageBookings from "./Components/admin/pages/ManageBookings";
+// import MonitorPayments from "./Components/admin/pages/MonitorPayments";
+// import FeedbackReports from "./Components/admin/pages/FeedbackReports";
+
 import {
   PlannerDashboard,
   PlannerProfile,
@@ -37,6 +45,16 @@ function App() {
       <Route path="/planner-payments" element={<PlannerPayments />} />
       <Route path="/planner-reviews" element={<PlannerReviews />} />
 
+      {/* Admin Dashboard Routes
+       <Route path="/admin" element={<Layout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="clients" element={<ManageClients />} />
+          <Route path="planners" element={<ManagePlanners />} />
+          <Route path="packages" element={<ManagePackages />} />
+          <Route path="bookings" element={<ManageBookings />} />
+          <Route path="payments" element={<MonitorPayments />} />
+          <Route path="reports" element={<FeedbackReports />} />
+        </Route> */}
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
