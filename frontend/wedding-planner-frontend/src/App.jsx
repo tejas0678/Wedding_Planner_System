@@ -5,8 +5,16 @@ import UserRegister from "./Components/auth/UserRegister";
 import PlannerRegister from "./Components/auth/PlannerRegister";
 import Login from "./Components/auth/Login";
 import ForgetPassword from "./Components/auth/ForgetPassword";
+import Layout from "./Components/admin/Layout";
 
-// Import Planner Dashboard components
+import AdminDashboard from "./Components/admin/pages/Dashboard";
+import ManageClients from "./Components/admin/pages/ManageClients";
+import ManagePlanners from "./Components/admin/pages/ManagePlanners";
+import ManagePackages from "./Components/admin/pages/ManagePackages";
+import ManageBookings from "./Components/admin/pages/ManageBookings";
+import MonitorPayments from "./Components/admin/pages/MonitorPayments";
+import FeedbackReports from "./Components/admin/pages/FeedbackReports";
+
 import {
   PlannerDashboard,
   PlannerProfile,
@@ -20,7 +28,7 @@ import {
 
 import { AppDataProvider } from './Components/client/context/AppDataContext'
 import ClientLayout from './Components/client/pages/ClientLayout'
-import Dashboard from './Components/client/pages/Dashboard'
+import ClientDashboard from './Components/client/pages/Dashboard'
 import Planners from './Components/client/pages/Planners'
 import Packages from './Components/client/pages/Packages'
 import Bookings from './Components/client/pages/Bookings'
@@ -48,6 +56,18 @@ function App() {
       <Route path="/planner-payments" element={<PlannerPayments />} />
       <Route path="/planner-reviews" element={<PlannerReviews />} />
 
+      {/* Admin Dashboard Routes */}
+      <Route path="/admin" element={<Layout />}>
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="clients" element={<ManageClients />} />
+        <Route path="planners" element={<ManagePlanners />} />
+        <Route path="packages" element={<ManagePackages />} />
+        <Route path="bookings" element={<ManageBookings />} />
+        <Route path="payments" element={<MonitorPayments />} />
+        <Route path="feedback" element={<FeedbackReports />} />
+      </Route>
+
       {/* Client Dashboard Routes */}
       <Route
         path="/client"
@@ -58,15 +78,14 @@ function App() {
         }
       >
         <Route index element={<Navigate to="/client/dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={<ClientDashboard />} />
         <Route path="planners" element={<Planners />} />
         <Route path="packages" element={<Packages />} />
         <Route path="bookings" element={<Bookings />} />
         <Route path="payments" element={<Payments />} />
         <Route path="feedback" element={<Feedback />} />
         <Route path="profile" element={<Profile />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/client/dashboard" replace />} />
+      </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
