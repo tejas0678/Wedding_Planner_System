@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom';
+// src/Components/admin/Sidebar.jsx
 
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -8,44 +9,44 @@ import {
   CreditCard,
   MessageSquare,
   LogOut,
-  X,
   Heart,
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 const navItems = [
   {
-    path: '/admin/dashboard',
-    label: 'Dashboard',
+    path: "/admin/dashboard",
+    label: "Dashboard",
     icon: LayoutDashboard,
   },
   {
-    path: '/admin/clients',
-    label: 'Manage Clients',
+    path: "/admin/clients",
+    label: "Manage Clients",
     icon: Users,
   },
   {
-    path: '/admin/planners',
-    label: 'Manage Planners',
+    path: "/admin/planners",
+    label: "Manage Planners",
     icon: Users,
   },
   {
-    path: '/admin/packages',
-    label: 'Manage Packages',
+    path: "/admin/packages",
+    label: "Manage Packages",
     icon: Package,
   },
   {
-    path: '/admin/bookings',
-    label: 'Manage Bookings',
+    path: "/admin/bookings",
+    label: "Manage Bookings",
     icon: ClipboardList,
   },
   {
-    path: '/admin/payments',
-    label: 'Monitor Payments',
+    path: "/admin/payments",
+    label: "Monitor Payments",
     icon: CreditCard,
   },
   {
-    path: '/admin/feedback',
-    label: 'Feedback & Reports',
+    path: "/admin/reports",
+    label: "Feedback & Reports",
     icon: MessageSquare,
   },
 ];
@@ -54,154 +55,126 @@ export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
 }) {
+  const navigate = useNavigate();
+
   const closeSidebar = () => setSidebarOpen(false);
+
+  const logout = () => {
+    navigate("/login");
+  };
 
   return (
     <>
+      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/30 lg:hidden"
           onClick={closeSidebar}
+          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
         />
       )}
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-30 w-64
-          bg-white border-r border-gray-100
-          transform transition-transform duration-300
-          lg:translate-x-0 lg:static lg:flex-shrink-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          fixed top-0 left-0 h-screen w-64 bg-white border-r shadow-lg
+          z-40 transform transition-transform duration-300
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0
         `}
       >
-
         <div className="flex flex-col h-full">
 
-          {/* Logo + Admin Profile */}
+          {/* Logo */}
 
-          <div className="px-4 pt-5 pb-4 border-b border-gray-100">
+          <div className="border-b p-5">
 
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center">
 
-              <span
-                className="w-7 h-7 rounded-lg grid place-items-center"
-                style={{
-                  background: '#fff0f3',
-                  color: '#e91e4d',
-                }}
-              >
-                <Heart className="w-4 h-4 fill-current" />
-              </span>
+              <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
 
-              <span
-                className="text-lg font-bold"
-                style={{ color: '#0f2747' }}
-              >
-                WedPlan Admin
-              </span>
+                <Heart className="w-5 h-5 fill-rose-500 text-rose-500" />
+
+              </div>
+
+              <div className="ml-3">
+
+                <h2 className="font-bold text-lg">
+                  WedPlan
+                </h2>
+
+                <p className="text-xs text-gray-500">
+                  Admin Panel
+                </p>
+
+              </div>
 
               <button
                 onClick={closeSidebar}
-                className="ml-auto lg:hidden text-gray-500"
+                className="ml-auto lg:hidden"
               >
                 <X className="w-5 h-5" />
               </button>
 
             </div>
 
-            <div
-              className="rounded-xl px-3 py-3"
-              style={{ background: '#fff0f3' }}
-            >
+          </div>
 
-              <div
-                className="text-xs font-semibold tracking-wide"
-                style={{ color: '#e91e4d' }}
-              >
-                ADMIN
-              </div>
+          {/* Admin */}
 
-              <div
-                className="font-bold mt-1"
-                style={{ color: '#0f2747' }}
-              >
-                Admin
-              </div>
+          <div className="m-4 bg-rose-50 rounded-xl p-4">
 
-              <div
-                className="text-xs mt-1 text-gray-500"
-                style={{ fontFamily: 'Arial,sans-serif' }}
-              >
-                admin@example.com
-              </div>
+            <p className="text-xs text-rose-500 uppercase">
+              Administrator
+            </p>
 
-            </div>
+            <h3 className="font-semibold mt-2">
+              Admin
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              admin@example.com
+            </p>
 
           </div>
 
           {/* Navigation */}
 
-          <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-3">
 
-            {navItems.map(
-              ({ path, label, icon: Icon }) => (
-
-                <NavLink
-                  key={path}
-                  to={path}
-                  onClick={closeSidebar}
-                  className={({ isActive }) =>
-                    `
-                    flex items-center gap-3
-                    px-3 py-2.5
-                    rounded-lg
-                    text-sm
-                    transition-all
-
-                    ${
-                      isActive
-                        ? 'bg-[#fff0f3] text-[#e91e4d] font-semibold'
-                        : 'text-[#29425f] hover:bg-gray-50'
-                    }
-                    `
-                  }
-                >
-
-                  <Icon className="w-[18px] h-[18px]" />
-
-                  <span>{label}</span>
-
-                </NavLink>
-
-              )
-            )}
+            {navItems.map(({ path, label, icon: Icon }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={closeSidebar}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition ${
+                    isActive
+                      ? "bg-rose-500 text-white"
+                      : "text-gray-600 hover:bg-rose-50 hover:text-rose-500"
+                  }`
+                }
+              >
+                <Icon className="w-5 h-5" />
+                {label}
+              </NavLink>
+            ))}
 
           </nav>
 
           {/* Logout */}
 
-          <div className="p-3 border-t border-gray-100">
+          <div className="border-t p-4">
 
             <button
-              onClick={() => console.log('Logout clicked')}
-              className="
-                flex items-center gap-3
-                w-full px-3 py-2.5
-                rounded-lg text-sm
-                text-[#e91e4d]
-                hover:bg-[#fff0f3]
-              "
+              onClick={logout}
+              className="flex items-center justify-center gap-2 w-full border border-rose-300 rounded-xl py-3 text-rose-500 hover:bg-rose-500 hover:text-white transition"
             >
-              <LogOut className="w-[18px] h-[18px]" />
-
-              <span>Logout</span>
-
+              <LogOut className="w-5 h-5" />
+              Logout
             </button>
 
           </div>
 
         </div>
-
       </aside>
     </>
   );
