@@ -1,45 +1,22 @@
-const tones = [
-  ['#eaf2ff', '#2563eb'],
-  ['#eafff3', '#00a86b'],
-  ['#fff0f3', '#e91e4d'],
-  ['#fff9df', '#d99000'],
-  ['#f0efff', '#6654e8'],
-];
-
 export default function StatCard({
   title,
   value,
-  icon: Icon,
-  index = 0,
+  symbol,
+  bg,
+  text,
 }) {
-  const [bg, color] =
-    tones[index % tones.length];
-
   return (
-    <div className="wp-stat-card">
-
+    <div className="bg-white rounded-xl shadow border border-gray-200 p-5 flex items-center gap-4">
       <div
-        className="wp-stat-icon"
-        style={{
-          background: bg,
-          color,
-        }}
+        className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl ${bg} ${text}`}
       >
-        <Icon className="w-6 h-6" />
+        {symbol}
       </div>
 
-      <div className="min-w-0">
-
-        <p className="wp-stat-label">
-          {title}
-        </p>
-
-        <p className="wp-stat-value">
-          {value}
-        </p>
-
+      <div>
+        <p className="text-sm text-gray-500">{title}</p>
+        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
       </div>
-
     </div>
   );
 }
