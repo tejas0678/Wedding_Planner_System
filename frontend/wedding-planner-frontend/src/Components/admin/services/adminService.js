@@ -1,8 +1,11 @@
 // Placeholder API service – replace with real API calls later
-const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms));
+
+const delay = (ms = 500) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getDashboardStats() {
   await delay();
+
   return {
     totalClients: 0,
     totalPlanners: 0,
@@ -39,7 +42,7 @@ export async function getPayments() {
   return [];
 }
 
-export async function getFeedback() {
+export async function getFeedbacks() {
   await delay();
   return [];
 }

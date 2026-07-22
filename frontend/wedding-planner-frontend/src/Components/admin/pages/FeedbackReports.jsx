@@ -1,93 +1,187 @@
-import { useEffect, useState } from 'react';
-import { Star } from 'lucide-react';
-import SearchBar from '../components/SearchBar';
-import EmptyState from '../components/EmptyState';
-import { getFeedback } from '../services/adminService';
+import { useEffect, useState } from "react";
+import SearchBar from "../components/SearchBar";
+import EmptyState from "../components/EmptyState";
+import { getFeedbacks } from "../services/adminService";
 
 export default function FeedbackReports() {
-  const [feedback, setFeedback] = useState([]);
-  const [search, setSearch] = useState('');
-  const [filterRating, setFilterRating] = useState(0);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [search, setSearch] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("All");
+
+  const [summary, setSummary] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+  });
 
   useEffect(() => {
-    getFeedback().then((data) => setFeedback(data));
+    loadFeedbacks();
   }, []);
 
-  const averageRating = feedback.length
-    ? (feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(1)
-    : 0;
+  const loadFeedbacks = async () => {
+    try {
+      const data = await getFeedbacks();
 
-  const filtered = feedback.filter((f) => {
-    const matchSearch = f.client.toLowerCase().includes(search.toLowerCase()) ||
-                        f.planner.toLowerCase().includes(search.toLowerCase());
-    const matchRating = filterRating === 0 || f.rating === filterRating;
-    return matchSearch && matchRating;
+      setFeedbacks(data || []);
+
+      if (data.length > 0) {
+        const total = data.reduce(
+          (sum, item) => sum + item.rating,
+          0
+        );
+
+        setSummary({
+          averageRating: (total / data.length).toFixed(1),
+          totalReviews: data.length,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const filteredFeedbacks = feedbacks.filter((item) => {
+    const matchesSearch =
+      item.clientName
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) ||
+      item.plannerName
+        ?.toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesRating =
+      ratingFilter === "All" ||
+      item.rating === Number(ratingFilter);
+
+    return matchesSearch && matchesRating;
   });
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Feedback & Reports</h1>
+    <div className="space-y-6">
 
-      {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-sm text-gray-500">Average Rating</p>
-          <p className="text-2xl font-semibold">{averageRating} ★</p>
+      {/* Heading */}
+
+      <div>
+        <h1 className="text-3xl font-bold text-gray-800">
+          Feedback & Reports
+        </h1>
+
+        <p className="mt-2 text-gray-500">
+          View customer reviews and planner ratings.
+        </p>
+      </div>
+
+      {/* Summary Cards */}
+
+      <div className="grid gap-6 md:grid-cols-2">
+
+        <div className="bg-white rounded-xl shadow border p-6">
+          <p className="text-gray-500 text-sm">
+            Average Rating
+          </p>
+
+          <h2 className="text-4xl font-bold text-yellow-500 mt-2">
+            ⭐ {summary.averageRating}
+          </h2>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-sm text-gray-500">Total Reviews</p>
-          <p className="text-2xl font-semibold">{feedback.length}</p>
+
+        <div className="bg-white rounded-xl shadow border p-6">
+          <p className="text-gray-500 text-sm">
+            Total Reviews
+          </p>
+
+          <h2 className="text-4xl font-bold text-blue-600 mt-2">
+            {summary.totalReviews}
+          </h2>
         </div>
+
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1">
-          <SearchBar value={search} onChange={setSearch} placeholder="Search by client or planner..." />
-        </div>
-        <div>
+
+      <div className="bg-white rounded-xl shadow border p-5">
+
+        <div className="flex flex-col md:flex-row gap-4">
+
+          <div className="flex-1">
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+              placeholder="Search client or planner..."
+            />
+          </div>
+
           <select
-            value={filterRating}
-            onChange={(e) => setFilterRating(Number(e.target.value))}
-            className="w-full sm:w-auto border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={ratingFilter}
+            onChange={(e) =>
+              setRatingFilter(e.target.value)
+            }
+            className="border rounded-lg px-4 py-2"
           >
-            <option value={0}>All Ratings</option>
-            <option value={5}>★★★★★ (5)</option>
-            <option value={4}>★★★★ (4)</option>
-            <option value={3}>★★★ (3)</option>
-            <option value={2}>★★ (2)</option>
-            <option value={1}>★ (1)</option>
+            <option value="All">All Ratings</option>
+            <option value="5">5 Star</option>
+            <option value="4">4 Star</option>
+            <option value="3">3 Star</option>
+            <option value="2">2 Star</option>
+            <option value="1">1 Star</option>
           </select>
+
         </div>
+
       </div>
 
       {/* Feedback List */}
+
       <div className="space-y-4">
-        {filtered.length === 0 ? (
-          <EmptyState message="No feedback found" />
+
+        {filteredFeedbacks.length === 0 ? (
+
+          <EmptyState message="No feedback available." />
+
         ) : (
-          filtered.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow p-4">
-              <div className="flex justify-between items-start">
+
+          filteredFeedbacks.map((feedback) => (
+
+            <div
+              key={feedback.id}
+              className="bg-white rounded-xl shadow border p-5"
+            >
+
+              <div className="flex justify-between items-center">
+
                 <div>
-                  <h3 className="font-semibold">{item.client}</h3>
-                  <p className="text-sm text-gray-500">{item.planner}</p>
+
+                  <h3 className="text-lg font-semibold">
+                    {feedback.clientName}
+                  </h3>
+
+                  <p className="text-gray-500">
+                    Planner : {feedback.plannerName}
+                  </p>
+
                 </div>
-                <div className="flex items-center">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${i < item.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                    />
-                  ))}
+
+                <div className="text-yellow-500 font-bold text-lg">
+                  ⭐ {feedback.rating}
                 </div>
+
               </div>
-              <p className="mt-2 text-gray-700">{item.comment}</p>
-              <p className="text-xs text-gray-400 mt-1">{item.date}</p>
+
+              <p className="mt-4 text-gray-700">
+                {feedback.comment}
+              </p>
+
+              <p className="mt-3 text-sm text-gray-400">
+                {feedback.date}
+              </p>
+
             </div>
+
           ))
+
         )}
+
       </div>
+
     </div>
   );
 }

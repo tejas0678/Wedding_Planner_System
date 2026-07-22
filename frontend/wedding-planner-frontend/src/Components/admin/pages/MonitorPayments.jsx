@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import { CreditCard, Clock, XCircle } from 'lucide-react';
-import StatusBadge from '../components/StatusBadge';
-import EmptyState from '../components/EmptyState';
-import { getPayments } from '../services/adminService';
+import { useEffect, useState } from "react";
+import StatusBadge from "../components/StatusBadge";
+import EmptyState from "../components/EmptyState";
+import { getPayments } from "../services/adminService";
 
 export default function MonitorPayments() {
   const [payments, setPayments] = useState([]);
@@ -14,80 +13,160 @@ export default function MonitorPayments() {
   });
 
   useEffect(() => {
-    getPayments().then((data) => {
-      setPayments(data);
-      // Compute summary from data
-      let totalRev = 0, pendingAmt = 0, failedAmt = 0;
-      data.forEach((p) => {
-        if (p.status === 'Paid') totalRev += p.amount;
-        else if (p.status === 'Pending') pendingAmt += p.amount;
-        else if (p.status === 'Failed') failedAmt += p.amount;
-      });
-      setSummary({
-        totalRevenue: totalRev,
-        pendingAmount: pendingAmt,
-        failedAmount: failedAmt,
-        totalPayments: data.length,
-      });
-    });
+    loadPayments();
   }, []);
 
-  const summaryCards = [
-    { title: 'Total Revenue', value: `₹${summary.totalRevenue.toLocaleString()}`, icon: CreditCard, color: 'text-green-600' },
-    { title: 'Pending Amount', value: `₹${summary.pendingAmount.toLocaleString()}`, icon: Clock, color: 'text-yellow-600' },
-    { title: 'Failed Amount', value: `₹${summary.failedAmount.toLocaleString()}`, icon: XCircle, color: 'text-red-600' },
+  const loadPayments = async () => {
+    const data = await getPayments();
+
+    setPayments(data);
+
+    let totalRevenue = 0;
+    let pendingAmount = 0;
+    let failedAmount = 0;
+
+    data.forEach((payment) => {
+      if (payment.status === "Paid") {
+        totalRevenue += payment.amount;
+      } else if (payment.status === "Pending") {
+        pendingAmount += payment.amount;
+      } else if (payment.status === "Failed") {
+        failedAmount += payment.amount;
+      }
+    });
+
+    setSummary({
+      totalRevenue,
+      pendingAmount,
+      failedAmount,
+      totalPayments: data.length,
+    });
+  };
+
+  const cards = [
+    {
+      title: "Total Revenue",
+      value: `₹${summary.totalRevenue.toLocaleString()}`,
+      bg: "bg-green-100",
+      text: "text-green-600",
+    },
+    {
+      title: "Pending Amount",
+      value: `₹${summary.pendingAmount.toLocaleString()}`,
+      bg: "bg-yellow-100",
+      text: "text-yellow-600",
+    },
+    {
+      title: "Failed Amount",
+      value: `₹${summary.failedAmount.toLocaleString()}`,
+      bg: "bg-red-100",
+      text: "text-red-600",
+    },
+    {
+      title: "Total Payments",
+      value: summary.totalPayments,
+      bg: "bg-blue-100",
+      text: "text-blue-600",
+    },
   ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Monitor Payments</h1>
+    <div className="space-y-6">
+      {/* Heading */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-800">
+          Monitor Payments
+        </h1>
+        <p className="text-gray-500 mt-1">
+          Track all payment transactions.
+        </p>
+      </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {summaryCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-lg shadow p-4 flex items-center gap-4">
-            <div className={`p-3 rounded-full ${card.color} bg-opacity-10`}>
-              <card.icon className="w-6 h-6" />
-            </div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <div
+            key={card.title}
+            className="bg-white rounded-xl shadow-sm border p-5 flex items-center justify-between"
+          >
             <div>
               <p className="text-sm text-gray-500">{card.title}</p>
-              <p className="text-xl font-semibold">{card.value}</p>
+              <h2 className="text-2xl font-bold mt-1">
+                {card.value}
+              </h2>
+            </div>
+
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center ${card.bg}`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full ${card.text.replace(
+                  "text",
+                  "bg"
+                )}`}
+              ></div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+      {/* Payments Table */}
+      <div className="bg-white rounded-xl shadow-sm border overflow-x-auto">
+        <table className="min-w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment ID</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wedding ID</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wedding Date</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Date</th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Payment ID
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Wedding ID
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Client
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Wedding Date
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Amount
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Status
+              </th>
+              <th className="px-5 py-3 text-left text-sm font-semibold">
+                Payment Date
+              </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+
+          <tbody>
             {payments.length === 0 ? (
               <tr>
-                <td colSpan="7" className="px-4 py-4 text-center">
-                  <EmptyState message="No payments found" />
+                <td colSpan="7">
+                  <EmptyState message="No payments found." />
                 </td>
               </tr>
             ) : (
               payments.map((payment) => (
-                <tr key={payment.id}>
-                  <td className="px-4 py-4 text-sm text-gray-900">{payment.id}</td>
-                  <td className="px-4 py-4 text-sm text-gray-500">{payment.weddingId}</td>
-                  <td className="px-4 py-4 text-sm text-gray-900">{payment.client}</td>
-                  <td className="px-4 py-4 text-sm text-gray-500">{payment.weddingDate}</td>
-                  <td className="px-4 py-4 text-sm text-gray-900">₹{payment.amount.toLocaleString()}</td>
-                  <td className="px-4 py-4"><StatusBadge status={payment.status} /></td>
-                  <td className="px-4 py-4 text-sm text-gray-500">{payment.paymentDate}</td>
+                <tr
+                  key={payment.id}
+                  className="border-t hover:bg-gray-50"
+                >
+                  <td className="px-5 py-4">{payment.id}</td>
+                  <td className="px-5 py-4">{payment.weddingId}</td>
+                  <td className="px-5 py-4">{payment.client}</td>
+                  <td className="px-5 py-4">
+                    {payment.weddingDate}
+                  </td>
+                  <td className="px-5 py-4 font-semibold">
+                    ₹{payment.amount.toLocaleString()}
+                  </td>
+                  <td className="px-5 py-4">
+                    <StatusBadge status={payment.status} />
+                  </td>
+                  <td className="px-5 py-4">
+                    {payment.paymentDate}
+                  </td>
                 </tr>
               ))
             )}
