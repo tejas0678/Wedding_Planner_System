@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -27,7 +29,30 @@ const Login = () => {
     console.log("Login Details:", loginData);
 
     // Add your API call here
-    alert(`${loginData.role} Login Successful!`);
+    // alert(`${loginData.role} Login Successful!`);
+
+    // Redirect based on role
+    if (loginData.role === "PLANNER") {
+      // Store user info in localStorage (for authentication)
+      localStorage.setItem("authToken", "mock-token-planner");
+      localStorage.setItem("userRole", "PLANNER");
+      localStorage.setItem("userName", "John Doe");
+      
+      // Navigate to planner dashboard
+      navigate("/planner-dashboard");
+    } else if (loginData.role === "USER") {
+      // Redirect to user dashboard (if you have one)
+      localStorage.setItem("authToken", "mock-token-user");
+      localStorage.setItem("userRole", "USER");
+      alert("User login - Redirect to user dashboard");
+      // navigate("/user-dashboard");
+    } else if (loginData.role === "ADMIN") {
+      // Redirect to admin dashboard (if you have one)
+      localStorage.setItem("authToken", "mock-token-admin");
+      localStorage.setItem("userRole", "ADMIN");
+      alert("Admin login - Redirect to admin dashboard");
+      // navigate("/admin-dashboard");
+    }
   };
 
   return (
@@ -143,40 +168,40 @@ const Login = () => {
           </form>
 
           {/* Forgot Password */}
-                  <p className="text-center mt-5">
-                      <a
-                          href="/forgot-password"
-                          className="text-pink-600 hover:underline font-medium"
-                      >
-                          Forgot Password?
-                      </a>
-                  </p>
-          
+          <p className="text-center mt-5">
+            <a
+              href="/forgot-password"
+              className="text-pink-600 hover:underline font-medium"
+            >
+              Forgot Password?
+            </a>
+          </p>
+
           {/* Divider */}
-<div className="border-t border-gray-200 my-6" />
+          <div className="border-t border-gray-200 my-6" />
 
-{/* Registration Links */}
-<p className="text-center text-gray-600 mb-3">
-  Don't have an account?
-</p>
+          {/* Registration Links */}
+          <p className="text-center text-gray-600 mb-3">
+            Don't have an account?
+          </p>
 
-<div className="flex justify-center">
-  <a
-    href="/user-register"
-    className="text-sm font-medium text-gray-600 hover:text-pink-600"
-  >
-    Register as User
-  </a>
-</div>
+          <div className="flex justify-center">
+            <a
+              href="/user-register"
+              className="text-sm font-medium text-gray-600 hover:text-pink-600"
+            >
+              Register as User
+            </a>
+          </div>
 
-<div className="flex justify-center mt-2">
-  <a
-    href="/planner-register"
-    className="text-sm font-medium text-gray-600 hover:text-pink-600"
-  >
-    Register as Planner
-  </a>
-</div>
+          <div className="flex justify-center mt-2">
+            <a
+              href="/planner-register"
+              className="text-sm font-medium text-gray-600 hover:text-pink-600"
+            >
+              Register as Planner
+            </a>
+          </div>
         </div>
       </div>
     </div>
